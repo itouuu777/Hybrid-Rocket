@@ -7,6 +7,8 @@ LoRa_E220 e220ttl(&Serial2, 33, 25, 26); // RX AUX M0 M1
 #define send_button_pin 27 // 送信ボタンの入力ピン
 
 int button_no = 0;
+int char_button = 0;
+int binary_button = 0;
 Configuration configuration; // Configurationインスタンスの作成
 
 void IRAM_ATTR sendbtn() { // 割り込み関数
@@ -18,7 +20,7 @@ void IRAM_ATTR sendbtn() { // 割り込み関数
 
 void setup() {
   // デバッグ用シリアル通信開始
-  Serial.begin(115200);
+  Serial.begin(9600);
 
   // LoRaモジュールの初期化
   Serial2.begin(9600, SERIAL_8N1, 16, 17); // RX, TX設定
@@ -95,13 +97,15 @@ void loop() {
         else if (command == "c") {
           char_button = 1;
         }
-        else if (command == "b"){
-          binary_button == 1
+        else if (command == "p") {
+          Serial.println("ononoa");
+          binary_button = 1;
         }
         else {
-          Serial.print("no_command")
+          Serial.print("no_command");
         }
     }
+
 
 
   // メッセージ送信
@@ -113,37 +117,37 @@ void loop() {
   }*/
 
 // strig型
-if (button_no == 1) {
-    ResponseStatus rs = e220ttl.sendMessage("test message");
-    if (rs.code == 1) { 
-        Serial.println("Message sent successfully!");
-    } 
-
-// char型
-else if (char_button == 1){ 
-  const char message[] = "test message";
-  ResponseStatus rs = e220ttl.sendMessage(message);
-  if (rs.code == 1) { 
-        Serial.println("Message sent successfully!");
-  } 
-
+  if (button_no == 1) {
+      ResponseStatus rs = e220ttl.sendMessage("test message");
+      if (rs.code == 1) { 
+          Serial.println("Message sent successfully!");
+      }
   }
 
-//バイナリそのまま
-else if (binary_button == 1) {
-    uint8_t binaryMessage[] = {0x41, 0x42, 0x43, 0x44}; // 'ABCD'を送信
-    ResponseStatus rs = e220ttl.sendMessage(binaryMessage, sizeof(binaryMessage));
+  // char型
+  else if (char_button == 1){ 
+    const char message[] = "test message";
+    ResponseStatus rs = e220ttl.sendMessage(message);
+    Serial.println("I can fly");
     if (rs.code == 1) { 
-        Serial.println("Message sent successfully!");
+          Serial.println("Message sent successfully!");
     } 
 
     }
-Serial.println(rs.getResponseDescription()); // 結果の詳細を表示
-button_no = 0;
-char_button = 0;
-binary_button = 0;  
-}
-  
 
+  //バイナリそのまま
+  else if (binary_button == 1) {
+      Serial.println("I don't ");
+      uint8_t binaryMessage[] = {0x41, 0x42, 0x43, 0x44}; // 'ABCD'を送信
+      ResponseStatus rs = e220ttl.sendMessage(binaryMessage, sizeof(binaryMessage));
+      Serial.println("I don't know");
+      if (rs.code == 1) { 
+          Serial.println("Message sent successfully!");
+      } 
 
+    }
+  //Serial.println(rs.getResponseDescription()); // 結果の詳細を表示
+  button_no = 0;
+  char_button = 0;
+  binary_button = 0;  
 }
