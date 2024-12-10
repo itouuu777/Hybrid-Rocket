@@ -96,22 +96,24 @@ void receive() {
       Serial.println("Message received!");
       // read the String message
       ResponseContainer rc = e220ttl.receiveMessageRSSI();
-      String message = e220ttl.receiveMessageRSSI();
 
-      if (message == "send") {
+
+
+      if (rc.data == "send") {
         Serial.println("message is [send]");
         Serial.print("message: ");
-        Serial.prinln(message);
+        Serial.println(rc.data);
       }
-      else if (message == "kimura") {
+      else if (rc.data == "kimura") {
         Serial.println("message is [kimura]");
-        Serial.print(message);
+        Serial.print(rc.data);
         Serial.println(" sinichi");
       }
-      else() {  
+      else {  
         Serial.print("message: ");
-        Serial.prinln(message);
+        Serial.println(rc.data);
     }
+}
 }
 
 void loop(){
