@@ -10,9 +10,7 @@
 LoRa_E220 e220ttl(&Serial2, 33, 25, 26); // RX AUX M0 M1
 #define send_button_pin 27 // 送信ボタンの入力ピン
 
-int button_no = 0;
-int char_button = 0;
-int binary_button = 0;
+int send = 0;
 Configuration configuration; // Configurationインスタンスの作成
 
 void IRAM_ATTR sendbtn() { // 割り込み関数
@@ -125,7 +123,7 @@ if (c.status.code == 1) {
 }
 
 void loop() {
-  Serial.println("oh yeah");
+  Serial.println("wait");
   imu::Quaternion quat = bno.getQuat();
   delay(1000);
   //LoRa.beginPacket();
@@ -154,15 +152,8 @@ void loop() {
 
         // コマンドに応じた処理を実行
         if (command == "s") {
-          button_no = 1;
+          send = 1;
         } 
-        else if (command == "c") {
-          char_button = 1;
-        }
-        else if (command == "p") {
-          Serial.println("ononoa");
-          binary_button = 1;
-        }
         else {
           Serial.print("no_command");
         }
@@ -189,38 +180,15 @@ void loop() {
   Serial.println(w_str);
 
 // strig型
-  if (button_no == 1) {
+  if (send == 1) {
       ResponseStatus rs = e220ttl.sendMessage(w_str);
       if (rs.code == 1) { 
           Serial.println("Message sent successfully!");
       }
   }
 
-  // char型
-  else if (char_button == 1){ 
-    const char message[] = "between_oppai_and_oppai";
-    ResponseStatus rs = e220ttl.sendMessage(message);
-    Serial.println("I can fly");
-    if (rs.code == 1) { 
-          Serial.println("Message sent successfully!");
-    } 
-
-    }
-
-  //バイナリそのまま
-  else if (binary_button == 1) {
-      Serial.println("I don't ");
-      uint8_t binaryMessage[] = {0x41, 0x42, 0x43, 0x44}; // 'ABCD'を送信
-      ResponseStatus rs = e220ttl.sendMessage(binaryMessage, sizeof(binaryMessage));
-      Serial.println("I don't know");
-      if (rs.code == 1) { 
-          Serial.println("Message sent successfully!");
-      } 
-
     }
   //Serial.println(rs.getResponseDescription()); // 結果の詳細を表示
-  button_no = 0;
-  char_button = 0;
-  binary_button = 0;  
+  send = 0;
   
 }
