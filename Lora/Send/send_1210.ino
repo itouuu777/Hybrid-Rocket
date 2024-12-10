@@ -11,8 +11,6 @@ LoRa_E220 e220ttl(&Serial2, 33, 25, 26); // RX AUX M0 M1
 Configuration configuration; // Configurationインスタンスの作成
 
 
-//Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire); //ICSの名前, デフォルトアドレス, 謎
-Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
 
 void setup() {
   // デバッグ用シリアル通信開始
