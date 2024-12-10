@@ -90,8 +90,31 @@ void input() {
 }
 }
 
+void receive() {
+  while(e220ttl.available()>1) {
+      //digitalWrite(ledPin, HIGH);
+      Serial.println("Message received!");
+      // read the String message
+      ResponseContainer rc = e220ttl.receiveMessageRSSI();
+      String message = e220ttl.receiveMessageRSSI();
 
+      if (message == "send") {
+        Serial.println("message is [send]");
+        Serial.print("message: ");
+        Serial.prinln(message);
+      }
+      else if (message == "kimura") {
+        Serial.println("message is [kimura]");
+        Serial.print(message);
+        Serial.println(" sinichi");
+      }
+      else() {  
+        Serial.print("message: ");
+        Serial.prinln(message);
+    }
+}
 
 void loop(){
   input();
+  receive();
 }
