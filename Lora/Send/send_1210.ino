@@ -4,7 +4,6 @@
 #include <Wire.h>
 #include <Ticker.h>
 
-
 // LoRaモジュールのピン設定
 LoRa_E220 e220ttl(&Serial2, 33, 25, 26); // RX AUX M0 M1
 
@@ -83,14 +82,16 @@ void input() {
     String command = Serial.readStringUntil('\n');
     ResponseStatus rs = e220ttl.sendMessage(command);
     if (rs.code == 1) { 
-        Seiral.println("command: " + command); 
+        Serial.println(command); 
         Serial.println("Message sent successfully!");
     }
   
-  return 0;
+ 
+}
 }
 
 
-void loop() {
+
+void loop(){
   input();
 }
