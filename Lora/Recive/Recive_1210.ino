@@ -80,6 +80,7 @@ void input() {
 
   while(Serial.available()) {
     String command = Serial.readStringUntil('\n');
+    command += " ";
     ResponseStatus rs = e220ttl.sendMessage(command);
     if (rs.code == 1) { 
         Serial.println(command); 
