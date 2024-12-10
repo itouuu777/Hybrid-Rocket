@@ -3,17 +3,9 @@
 
 // LoRaモジュールのピン設定
 LoRa_E220 e220ttl(&Serial2, 33, 25, 26); // RX AUX M0 M1
-#define send_button_pin 27 // 送信ボタンの入力ピン
 
-int button_no = 0;
 Configuration configuration; // Configurationインスタンスの作成
 
-void IRAM_ATTR sendbtn() { // 割り込み関数
-  delayMicroseconds(250); // チャタリング防止
-  if ((digitalRead(send_button_pin) == LOW) && (button_no == 0)) {
-    button_no = 1;
-  }
-}
 
 void setup() {
   // デバッグ用シリアル通信開始
@@ -22,10 +14,6 @@ void setup() {
   // LoRaモジュールの初期化
   Serial2.begin(9600, SERIAL_8N1, 16, 17); // RX, TX設定
   e220ttl.begin();
-
-  // ボタンピンの初期化
-  pinMode(send_button_pin, INPUT_PULLUP); // ボタンピンをプルアップ設定
-  attachInterrupt(digitalPinToInterrupt(send_button_pin), sendbtn, FALLING); // 割り込み設定
 
   // LoRaモジュールの設定
   configuration.ADDL = 0x00; // アドレスの下位
