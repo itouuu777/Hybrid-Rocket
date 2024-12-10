@@ -2,26 +2,14 @@
 #include <LoRa_E220.h>
 #include <LoRa.h>
 #include <Wire.h>
-#include <Adafruit_BNO055.h>
 #include <Ticker.h>
 
 
 // LoRaモジュールのピン設定
 LoRa_E220 e220ttl(&Serial2, 33, 25, 26); // RX AUX M0 M1
-#define send_button_pin 27 // 送信ボタンの入力ピン
 
-int send = 0;
 Configuration configuration; // Configurationインスタンスの作成
 
-void IRAM_ATTR sendbtn() { // 割り込み関数
-  delayMicroseconds(250); // チャタリング防止
-  if ((digitalRead(send_button_pin) == LOW) && (button_no == 0)) {
-    button_no = 1;
-  }
-}
-
-Ticker bno055ticker; //タイマー割り込み用のインスタンス
-#define BNO055interval 10 //何ms間隔でデータを取得するか
 
 //Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28, &Wire); //ICSの名前, デフォルトアドレス, 謎
 Adafruit_BNO055 bno = Adafruit_BNO055(55, 0x28);
@@ -44,8 +32,6 @@ void setup() {
   // ボタンピンの初期化
   pinMode(send_button_pin, INPUT_PULLUP); // ボタンピンをプルアップ設定
   attachInterrupt(digitalPinToInterrupt(send_button_pin), sendbtn, FALLING); // 割り込み設定
-
-
 
 
   // LoRaモジュールの設定
@@ -94,82 +80,34 @@ if (c.status.code == 1) {
     Serial.println(c.status.getResponseDescription());
 }
 
-  pinMode(21, INPUT_PULLUP); //SDA 21番ピンのプルアップ(念のため)
-  pinMode(22, INPUT_PULLUP); //SDA 22番ピンのプルアップ(念のため)
-
-  Serial.begin(9600);
-  Serial.println("Orientation Sensor Raw Data Test"); Serial.println("");
-
-  if (!bno.begin()) // センサの初期化
-  {
-    Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
-    while (1);
-  }
-
-  delay(10000);
-
-  /* Display the current temperature */
-  int8_t temp = bno.getTemp();
-  Serial.print("Current Temperature: ");
-  Serial.print(temp);
-  Serial.println(" C");
-  Serial.println("");
-
-  bno.setExtCrystalUse(false);
-
-  Serial.println("Calibration status values: 0=uncalibrated, 3=fully calibrated");
-  //bno055ticker.attach_ms(BNO055interval, get_bno055_data);
-
 }
 
-void loop() {
-  Serial.println("wait");
-  imu::Quaternion quat = bno.getQuat();
-  delay(1000);
-  //LoRa.beginPacket();
-  //LoRa.print("hello");
-  //LoRa.endPacket();
-  Serial.println("ok");
-  // メッセージ受信
-  if (e220ttl.available() > 1) {
-    Serial.println("Message received!");
 
-    // メッセージの受信
-    ResponseContainer rc = e220ttl.receiveMessageRSSI();
-    
-    if (rc.status.code != 1) {
-      Serial.println(rc.status.getResponseDescription());
-    } else {
-      Serial.println(rc.status.getResponseDescription());
-      Serial.println(rc.data);
-      Serial.print("RSSI: ");
-      Serial.println(rc.rssi, DEC);
-    }
-    
-  }
-  if (Serial.available()) {
-        String command = Serial.readStringUntil('\n'); // 改行まで読み取る
-
-        // コマンドに応じた処理を実行
-        if (command == "s") {
-          send = 1;
-        } 
-        else {
-          Serial.print("no_command");
-        }
-    }
-
-
-
-
-  Serial.println(w_str);
 
 void input() {
+  /*
   do {
     String command = Serial.readStringUntil('\n');
-    
-    
-  }while(Serial.available())
+    ResponseStatus rs = e220ttl.sendMessage(command);
+    if (rs.code == 1) { 
+        Seiral.println("command: " + command); 
+        Serial.println("Message sent successfully!");
+    }    
+  }while(Serial.available()) ;
+*/
 
+  while(Serial.available()) {
+    String command = Serial.readStringUntil('\n');
+    ResponseStatus rs = e220ttl.sendMessage(command);
+    if (rs.code == 1) { 
+        Seiral.println("command: " + command); 
+        Serial.println("Message sent successfully!");
+    }
   
+  return 0;
+}
+
+
+void loop() {
+  input();
 }
