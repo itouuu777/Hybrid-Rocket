@@ -28,12 +28,6 @@ void setup() {
     Serial.println("Failed to initialize LoRa module");
   }
 
-
-  // ボタンピンの初期化
-  pinMode(send_button_pin, INPUT_PULLUP); // ボタンピンをプルアップ設定
-  attachInterrupt(digitalPinToInterrupt(send_button_pin), sendbtn, FALLING); // 割り込み設定
-
-
   // LoRaモジュールの設定
   configuration.ADDL = 0x00; // アドレスの下位
   configuration.ADDH = 0x00; // アドレスの上位
@@ -48,17 +42,8 @@ void setup() {
   configuration.TRANSMISSION_MODE.fixedTransmission = FT_TRANSPARENT_TRANSMISSION; // 透明通信
   configuration.TRANSMISSION_MODE.enableLBT = LBT_DISABLED; // 干渉チェック無効化
   configuration.TRANSMISSION_MODE.WORPeriod = WOR_2000_011; // WORタイミング
-/*
-ResponseStructContainer c = e220ttl.getConfiguration();
-if (c.status.code == 1) {
-    Configuration receivedConfiguration = *(Configuration *)c.data;
-    Serial.println(receivedConfiguration.ADDH, HEX);
-    Serial.println(receivedConfiguration.ADDL, HEX);
-    Serial.println(receivedConfiguration.CHAN, HEX);
-} else {
-    Serial.println(c.status.getResponseDescription());
-}*/
 
+  
 ResponseStatus rs = e220ttl.setConfiguration(configuration, WRITE_CFG_PWR_DWN_SAVE);
 if (rs.code == 1) {
     Serial.println("Configuration written successfully!");
