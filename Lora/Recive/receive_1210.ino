@@ -72,11 +72,6 @@ void loop() {
         Serial.print(message);
         Serial.println(" sinichi");
       }
-      else if ("123") {
-        Serial.println("message is 123");
-        Serial.print("message: ");
-        Serial.prinln(message);
-      }
       else() {  
         Serial.print("message: ");
         Serial.prinln(message);
